@@ -1,0 +1,123 @@
+<% layout('/layouts/boilerplate') %>
+
+<body>
+<div class="container mt-4">
+
+    <h3 class="mb-3" style="font-weight:600; color:#111;">Sold Items</h3>
+
+    <% if (!orders || orders.length === 0) { %>
+        <div class="card shadow-sm p-3">
+            <p class="text-muted mb-0">No sold items yet.</p>
+        </div>
+    <% } %>
+
+    <% orders.forEach(order => { %>
+
+        <div class="card shadow-sm mb-4" style="border-radius:6px;">
+            <div class="card-body">
+
+                <!-- Buyer Info -->
+                <h6 style="font-weight:600;">
+                    Buyer: <%= order.buyer ? order.buyer.username : "Unknown" %>
+                </h6>
+                <p class="small text-muted mb-1">
+                    <%= order.buyer ? order.buyer.email : "" %> · Order ID: <%= order._id %>
+                </p>
+
+                <hr>
+
+                <% if (!order.sellerItems || order.sellerItems.length === 0) { %>
+                    <p class="small text-muted">No items for you in this order.</p>
+                <% } %>
+
+                <% order.sellerItems.forEach((entry, i) => { 
+                       const item = entry.item;
+                       const origIdx = entry.index;
+                %>
+
+                <div class="row align-items-center mb-3">
+
+                    <!-- Image -->
+                    <div class="col-md-2 col-3">
+                        <img 
+                            src="<%= item.imageSnapshot %>" 
+                            class="img-fluid border rounded" 
+                            alt="<%= item.titleSnapshot || 'Product' %>"
+                        >
+                    </div>
+
+                    <!-- Title + Price -->
+                    <div class="col-md-4 col-9">
+                        <h6 class="mb-1" style="font-weight:600;">
+                            <%= item.titleSnapshot || "Product" %>
+                        </h6>
+                        <p class="small text-muted mb-0">
+                            Qty: <%= item.quantity %> · ₹<%= (item.priceSnapshot || 0).toLocaleString("en-IN") %>
+                        </p>
+                    </div>
+
+                    <!-- PAYMENT -->
+                    <div class="col-md-3 mt-2 mt-md-0">
+                        <form 
+                            action="/seller/soldItems/<%= order._id %>/items/<%= origIdx %>/payment?_method=PUT" 
+                            method="POST"
+                        >
+                            <label class="small" style="font-weight:600;">Payment</label>
+
+                            <div class="d-flex align-items-center mt-1">
+                                <!-- Always submit something -->
+                                <input type="hidden" name="paymentStatus" value="Unpaid">
+
+                                <input 
+                                    type="checkbox"
+                                    name="paymentStatus"
+                                    value="Paid"
+                                    <%= item.paymentStatus === "Paid" ? "checked" : "" %>
+                                >
+                                <span class="ms-2 small">Paid</span>
+
+                                <button class="btn btn-sm btn-success ms-3" type="submit">
+                                    Save
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- STATUS -->
+                    <div class="col-md-3 mt-2 mt-md-0">
+                        <form 
+                            action="/seller/soldItems/<%= order._id %>/items/<%= origIdx %>/status?_method=PUT" 
+                            method="POST"
+                        >
+                            <label class="small" style="font-weight:600;">Order Status</label>
+
+                            <div class="d-flex mt-1">
+                                <select name="status" class="form-select form-select-sm">
+                                    <option value="Packed"    <%= item.status === "Packed"    ? "selected" : "" %>>Packed</option>
+                                    <option value="Shipped"   <%= item.status === "Shipped"   ? "selected" : "" %>>Shipped</option>
+                                    <option value="Delivered" <%= item.status === "Delivered" ? "selected" : "" %>>Delivered</option>
+                                    <option value="Cancelled" <%= item.status === "Cancelled" ? "selected" : "" %>>Cancelled</option>
+                                </select>
+
+                                <button class="btn btn-sm btn-outline-primary ms-2" type="submit">
+                                    Update
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
+
+                <% if (i !== order.sellerItems.length - 1) { %>
+                    <hr class="my-2">
+                <% } %>
+
+                <% }) %>
+
+            </div>
+        </div>
+
+    <% }) %>
+
+</div>
+</body>

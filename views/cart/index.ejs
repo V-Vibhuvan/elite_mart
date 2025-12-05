@@ -1,0 +1,172 @@
+<% layout("layouts/boilerplate") %>
+
+<style>
+    .cart-card {
+        border-radius: 8px;
+        padding: 1rem;
+        box-shadow: 0 6px 18px rgba(22,24,26,0.06);
+        background: #fff;
+    }
+    .image-frame {
+        width: 100%;
+        aspect-ratio: 1 / 1;
+        overflow: hidden;
+        border-radius: 6px;
+        background: #f8f8f8;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .cart-img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+    }
+    .title-small { font-size: 1rem; font-weight: 700; margin-bottom: .25rem; color:#111; }
+    .price-big { font-size: 1.25rem; font-weight: 800; color: #111; }
+    .muted { color: #6b6b6b; }
+    .qty-input { width: 80px; }
+    .summary-card { border-radius: 8px; padding: 1rem; background: #fff; box-shadow: 0 6px 18px rgba(22,24,26,0.04); }
+    .small-muted { font-size: .9rem; color:#6b6b6b; }
+    @media (max-width: 767.98px) {
+        .price-big { font-size: 1.05rem; }
+        .image-frame { aspect-ratio: 1/1; }
+        .cart-img { object-fit: cover; }
+    }
+</style>
+
+<div class="container mt-5">
+    <div class="row mb-3">
+        <div class="col-12">
+        <h3>Your Cart</h3>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-8">
+
+        <% if (!cart || !cart.items || cart.items.length === 0) { %>
+            <div class="alert alert-info">Your Cart is empty.</div>
+        <% } else { %>
+
+            <% cart.items.forEach(function(item) { %>
+            <div class="card cart-card mb-3">
+                <div class="row g-3 align-items-center">
+
+                <!-- Product Image -->
+                <div class="col-md-2 col-4">
+                    <div class="image-frame">
+                        <a href="/products/<%= item.product ? item.product._id : '#' %>">
+                            <img 
+                                src="<%= item.imageSnapshot %>"
+                                alt="<%= item.titleSnapshot %>"
+                                class="cart-img"
+                            />
+                        </a>
+                    </div>
+                </div>
+
+
+                <!-- Product Title & Seller -->
+                <div class="col-md-6 col-8">
+                    <div class="title-small">
+                    <a href="/products/<%= item.product ? item.product._id : '#' %>"
+                        class="text-decoration-none text-dark">
+                        <%= item.titleSnapshot || item.product?.title || "Unknown Product" %>
+                    </a>
+                    </div>
+
+                    <div class="small-muted mb-2">
+                    Sold by:
+                    <strong class="muted">
+                        <%= item.seller.username  || "Unknown" %>
+                    </strong>
+                    </div>
+
+                    <div class="small-muted">
+                    Price at add:
+                    <span class="price-big">
+                        ₹ <%= (item.priceSnapshot || 0).toLocaleString("en-IN") %>
+                    </span>
+                    </div>
+                </div>
+
+                <!-- Qty, Remove, Subtotal -->
+                <div class="col-md-4 col-12">
+                    <div class="d-flex flex-column gap-2">
+
+                    <!-- Quantity update -->
+                    <form action="/cart/item/<%= item._id %>?_method=PUT" method="POST"
+                            class="d-flex align-items-center">
+                        <label class="me-2 small-muted mb-0">Qty</label>
+                        <input type="number" name="quantity"
+                            class="form-control qty-input me-3"
+                            min="1" value="<%= item.quantity %>" required>
+                        <button class="btn btn-outline-dark btn-sm me-2" type="submit">
+                        Update
+                        </button>
+                    </form>
+
+                    <!-- Remove item -->
+                    <form action="/cart/item/<%= item._id %>?_method=DELETE" method="POST">
+                        <button class="btn btn-danger btn-sm" type="submit">Remove</button>
+                    </form>
+
+                    <div class="small-muted mt-2">
+                        Subtotal:
+                        <strong>
+                        ₹ <%= (item.priceSnapshot * item.quantity).toLocaleString("en-IN") %>
+                        </strong>
+                    </div>
+                    </div>
+                </div>
+
+                </div>
+            </div>
+            <% }); %>
+
+        <% } %>
+
+        </div>
+
+        <!-- ORDER SUMMARY -->
+        <div class="col-lg-4">
+        <div class="summary-card sticky-top" style="top: 1rem;">
+            <h5 class="mb-3">Order Summary</h5>
+
+            <% let total = 0;
+            if (cart && cart.items) {
+                cart.items.forEach(it => {
+                total += (it.priceSnapshot || 0) * (it.quantity || 0);
+                });
+            }
+            %>
+
+            <p class="mb-1 small-muted">
+            Items: <strong><%= cart?.items?.length || 0 %></strong>
+            </p>
+
+            <p class="mb-3">
+            Order Total:
+            <span class="price-big">₹ <%= total.toLocaleString("en-IN") %></span>
+            </p>
+
+            <!-- FIXED: Checkout uses POST /orders/create -->
+            <form action="/orders/create" method="POST">
+                <button type="submit" class="btn btn-primary w-100 mb-2">Proceed to Checkout</button>
+            </form>
+
+            <a href="/products" class="btn btn-outline-secondary w-100">
+            Continue Shopping
+            </a>
+
+            <hr />
+
+            <p class="small-muted mb-1">Shipping</p>
+            <p class="small-muted">Free on orders above ₹1999</p>
+            <p class="small-muted mb-0">Return policy: 7 days</p>
+        </div>
+        </div>
+
+    </div>
+</div>

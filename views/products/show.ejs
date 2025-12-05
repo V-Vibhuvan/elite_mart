@@ -1,0 +1,146 @@
+<% layout("/layouts/boilerplate") %>
+
+<style>
+  .hero { display:flex; gap:1rem; flex-wrap:wrap; align-items:flex-start; padding:1rem; }
+  .left { flex:1 1 360px; max-width:520px; }
+  .right { flex:1 1 360px; min-width:280px; }
+  .image-frame { width:100%; aspect-ratio:1/1; overflow:hidden; border:1px solid #eee; border-radius:6px; display:flex; align-items:center; justify-content:center; background:#fafafa; }
+  .image-frame img { width:100%; height:100%; object-fit:contain; display:block; }
+  #imageThumbnails { margin-top:.5rem; display:flex; gap:.5rem; flex-wrap:wrap; }
+  .thumb { width:56px; height:56px; border-radius:4px; overflow:hidden; border:1px solid transparent; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; }
+  .thumb img { width:100%; height:100%; object-fit:cover; display:block; }
+  .thumb.active { border-color:#0d6efd; box-shadow:0 4px 10px rgba(13,110,253,0.08); }
+  .product-title { font-weight:700; margin:0 0 .5rem 0; font-size:1.15rem; }
+  .price { font-weight:800; font-size:1.3rem; margin:.25rem 0; }
+</style>
+
+<div class="container mt-4">
+
+  <div class="card p-2">
+    <div class="hero">
+
+      <!-- LEFT: IMAGES -->
+      <div class="left">
+
+        <!-- Main Preview -->
+        <div class="image-frame">
+          <img id="mainPreview"
+               src="<%= product.image[0].url %>"
+               alt="<%= product.title %>">
+        </div>
+
+        <!-- Thumbnails -->
+        <div id="imageThumbnails">
+          <% product.image.forEach((img, idx) => { %>
+            <div class="thumb <%= idx === 0 ? 'active' : '' %>"
+                 data-url="<%= img.url %>">
+              <img src="<%= img.url %>" alt="thumb <%= idx %>">
+            </div>
+          <% }) %>
+        </div>
+      </div>
+
+      <!-- RIGHT: DETAILS -->
+      <div class="right">
+        <h2 class="product-title"><%= product.title %></h2>
+        <div class="text-muted mb-1">Sold by: <strong><%= product.owner?.username %></strong></div>
+        <div class="price">₹ <%= product.price %></div>
+        <p class="mb-2"><%= product.description %></p>
+
+        <div class="mb-2">
+          <% if (currUser && product.owner && String(currUser._id) === String(product.owner._id)) { %>
+            <a href="/products/<%=product._id%>/edit" class="btn btn-sm btn-dark me-2">Edit</a>
+            <form method="POST" action="/products/<%= product._id %>?_method=DELETE" class="d-inline">
+              <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+            </form>
+          <% } else { %>
+            <form action="/cart/add/<%= product._id %>" method="POST" class="d-inline">
+              <button type="submit" class="btn btn-sm btn-primary me-2">Add to Cart</button>
+            </form>
+            <form action="/orders" method="POST" class="d-inline">
+              <button type="submit" class="btn btn-sm btn-outline-primary">Buy Now</button>
+            </form>
+          <% } %>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ⭐⭐⭐ REVIEWS SECTION ⭐⭐⭐ -->
+  <div class="mt-4">
+
+    <hr>
+    <h4>Leave a Review</h4>
+
+    <% if (currUser) { %>
+      <form action="/products/<%= product._id %>/reviews" method="POST" class="mt-3">
+
+        <label class="form-label">Rating</label>
+        <fieldset class="starability-slot">
+          <input type="radio" id="no-rate" class="input-no-rate" name="review[rating]" value="1" checked />
+          <input type="radio" id="rate1" name="review[rating]" value="1" />
+          <label for="rate1" title="Terrible">1 star</label>
+
+          <input type="radio" id="rate2" name="review[rating]" value="2" />
+          <label for="rate2" title="Not good">2 stars</label>
+
+          <input type="radio" id="rate3" name="review[rating]" value="3" />
+          <label for="rate3" title="Average">3 stars</label>
+
+          <input type="radio" id="rate4" name="review[rating]" value="4" />
+          <label for="rate4" title="Very good">4 stars</label>
+
+          <input type="radio" id="rate5" name="review[rating]" value="5" />
+          <label for="rate5" title="Amazing">5 stars</label>
+        </fieldset>
+
+        <div class="mt-3 mb-3">
+          <label class="form-label">Comment</label>
+          <textarea name="review[comment]" class="form-control" rows="4" required></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-sm btn-outline-dark">Submit</button>
+      </form>
+    <% } %>
+
+    <hr class="mt-4">
+    <h4>All Reviews</h4>
+
+    <div class="row mt-3">
+      <% product.reviews.forEach(review => { %>
+        <div class="card col-5 me-3 mb-3 p-0">
+
+          <div class="card-body">
+            <h6 class="card-title">@<%= review.author?.username || "Unknown" %></h6>
+
+            <p class="starability-result" data-rating="<%= review.rating %>"></p>
+
+            <p class="card-text"><%= review.comment %></p>
+          </div>
+
+          <form method="POST"
+                action="/products/<%= product._id %>/reviews/<%= review._id %>?_method=DELETE"
+                class="mb-3 px-3">
+            <button class="btn btn-sm btn-dark" type="submit">Delete</button>
+          </form>
+
+        </div>
+      <% }) %>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  const thumbs = document.querySelectorAll('#imageThumbnails .thumb');
+  const main = document.getElementById('mainPreview');
+
+  thumbs.forEach(t => {
+    t.addEventListener('click', function () {
+      thumbs.forEach(x => x.classList.remove('active'));
+      this.classList.add('active');
+      main.src = this.dataset.url;
+    });
+  });
+</script>

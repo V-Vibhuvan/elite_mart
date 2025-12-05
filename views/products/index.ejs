@@ -1,0 +1,179 @@
+<% layout('/layouts/boilerplate') %>
+
+<style>
+    /* Product Cards */
+    .listing-card {
+        border-radius: 6px;
+        overflow: hidden;
+        transition: transform .15s ease, box-shadow .15s ease;
+    }
+    .listing-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    }
+    .listing-card img {
+        height: 220px;
+        object-fit: contain;
+        background: #f8f8f8;
+        padding: 10px;
+        width: 100%;
+    }
+    .card-title {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #222;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .price {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #111;
+    }
+
+    #filters {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 20px;
+        padding: 15px 5px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+    }
+
+    #filters .filter {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-width: 90px;
+        gap: 6px;
+        text-align: center;
+        cursor: pointer;
+        transition: opacity .2s ease;
+        background: none;
+        border: none;
+    }
+
+    #filters .filter:hover {
+        opacity: 0.6;
+    }
+
+    #filters .filter i {
+        font-size: 20px;
+        background: #f2f2f2;
+        padding: 10px;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        line-height: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    #filters .filter p {
+        margin: 0;
+        font-size: 0.85rem;
+        white-space: nowrap;
+    }
+
+    @media (max-width: 576px) {
+        .listing-card img {
+            height: 180px;
+        }
+    }
+</style>
+
+<!-- FILTERS BAR -->
+<div id="filters">
+
+    <form method="GET" action="/products">
+        <button class="filter" name="category" value="Books & Stationery">
+            <div><i class="fa-solid fa-book"></i></div>
+            <p>Books & Stationery</p>
+        </button>
+    </form>
+
+    <form method="GET" action="/products">
+        <button class="filter" name="category" value="Clothing">
+            <div><i class="fa-solid fa-shirt"></i></div>
+            <p>Clothing</p>
+        </button>
+    </form>
+
+    <form method="GET" action="/products">
+        <button class="filter" name="category" value="Home & Kitchen">
+            <div><i class="fa-solid fa-kitchen-set"></i></div>
+            <p>Home & Kitchen</p>
+        </button>
+    </form>
+
+    <form method="GET" action="/products">
+        <button class="filter" name="category" value="Mobiles & Accessories">
+            <div><i class="fa-solid fa-mobile"></i></div>
+            <p>Mobiles & Accessories</p>
+        </button>
+    </form>
+
+    <form method="GET" action="/products">
+        <button class="filter" name="category" value="Healthcare">
+            <div><i class="fa-solid fa-kit-medical"></i></div>
+            <p>Healthcare</p>
+        </button>
+    </form>
+
+    <form method="GET" action="/products">
+        <button class="filter" name="category" value="Groceries">
+            <div><i class="fa-solid fa-basket-shopping"></i></div>
+            <p>Groceries</p>
+        </button>
+    </form>
+
+    <form method="GET" action="/products">
+        <button class="filter" name="category" value="Furniture">
+            <div><i class="fa-solid fa-couch"></i></div>
+            <p>Furniture</p>
+        </button>
+    </form>
+
+    <form method="GET" action="/products">
+        <button class="filter" name="category" value="Plastic Items">
+            <div><i class="fa-solid fa-bottle-water"></i></div>
+            <p>Plastic Items</p>
+        </button>
+    </form>
+
+</div>
+
+<!-- PRODUCT GRID -->
+<div class="container mt-4">
+    <div class="row">
+
+        <% allProducts.forEach(p => { %>
+
+            <div class="col-md-3 col-sm-6 col-12 mb-4">
+                <a href="/products/<%= p._id %>" class="listing-link" style="text-decoration:none; color:inherit;">
+                    <div class="card listing-card">
+
+                        <% let imgUrl =
+                            p.image && p.image.length > 0
+                                ? p.image[0].url
+                                : 'https://via.placeholder.com/300';
+                        %>
+
+                        <img src="<%= imgUrl %>" class="card-img-top" alt="product-image" />
+
+                        <div class="card-body">
+                            <h5 class="card-title"><%= p.title %></h5>
+                            <p class="price">₹<%= p.price %></p>
+                        </div>
+
+                    </div>
+                </a>
+            </div>
+
+        <% }) %>
+
+    </div>
+</div>

@@ -1,0 +1,172 @@
+<% layout("/layouts/boilerplate") -%>
+
+<style>
+  .flip-form {
+    border-radius: 8px;
+    padding: 1rem;
+    box-shadow: 0 6px 18px rgba(22,24,26,0.06);
+    background: #fff;
+  }
+  .image-frame {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    border-radius: 6px;
+    background: #f6f6f6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .image-frame img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+  }
+  .edit-panel .form-control { height: calc(1.8em + .75rem + 2px); }
+  .edit-panel .form-label { font-weight: 600; font-size: .95rem; }
+  .price-line { font-size: 1.6rem; font-weight: 800; color: #111; margin-bottom: .5rem; }
+  .edit-actions .btn { min-width: 110px; }
+  @media (max-width: 767.98px) {
+    .image-frame { aspect-ratio: 1/1; }
+    .price-line { font-size: 1.25rem; }
+  }
+</style>
+
+<div class="container mt-5">
+
+  <div class="card flip-form mb-4">
+    <div class="row g-3 align-items-start">
+      
+      <!-- IMAGE -->
+      <div class="col-md-5">
+        <div class="image-frame">
+          <img id="mainPreview" src="<%= product.image[0].url %>" alt="<%= product.title %>">
+        </div>
+        <p class="mt-2 mb-0 text-muted small">Sold by: 
+          <strong><%= product.owner?.username %></strong>
+        </p>
+      </div>
+
+      <!-- RIGHT FORM -->
+      <div class="col-md-7">
+        <div class="edit-panel">
+          <h4 class="mb-2"><%= product.title || 'Edit Product' %></h4>
+
+          <form method="POST" action="/products/<%= product._id %>?_method=PUT"
+                class="needs-validation" novalidate>
+
+            <!-- Title -->
+            <div class="mb-2">
+              <label class="form-label">Product Title</label>
+              <input name="product[title]" class="form-control"
+                     type="text" value="<%= product.title %>" required>
+            </div>
+
+            <!-- Price -->
+            <div class="mb-2">
+              <label class="form-label">Price (₹)</label>
+              <div class="price-line">₹ <%= product.price %></div>
+              <input name="product[price]" class="form-control"
+                     type="number" value="<%= product.price %>" required>
+            </div>
+            
+            <!-- Category -->
+            <div class="mb-2">
+              <label class="form-label">Category</label>
+              <select name="product[category]" class="form-select" required>
+                <option value="">Select Category</option>
+
+                <option value="Books & Stationery"
+                  <%= product.category === "Books & Stationery" ? "selected" : "" %>>
+                  Books & Stationery
+                </option>
+
+                <option value="Clothing"
+                  <%= product.category === "Clothing" ? "selected" : "" %>>
+                  Clothing
+                </option>
+
+                <option value="Home & Kitchen"
+                  <%= product.category === "Home & Kitchen" ? "selected" : "" %>>
+                  Home & Kitchen
+                </option>
+
+                <option value="Mobiles & Accessories"
+                  <%= product.category === "Mobiles & Accessories" ? "selected" : "" %>>
+                  Mobiles & Accessories
+                </option>
+
+                <option value="Healthcare"
+                  <%= product.category === "Healthcare" ? "selected" : "" %>>
+                  Healthcare
+                </option>
+
+                <option value="Groceries"
+                  <%= product.category === "Groceries" ? "selected" : "" %>>
+                  Groceries
+                </option>
+
+                <option value="Furniture"
+                  <%= product.category === "Furniture" ? "selected" : "" %>>
+                  Furniture
+                </option>
+
+                <option value="Plastic Items"
+                  <%= product.category === "Plastic Items" ? "selected" : "" %>>
+                  Plastic Items
+                </option>
+
+              </select>
+            </div>
+
+            <!-- Description -->
+            <div class="mb-2">
+              <label class="form-label">Description</label>
+              <textarea name="product[description]" rows="3"
+                        class="form-control" required>
+                <%= product.description %>
+              </textarea>
+            </div>
+
+            <!-- Thumbnails (NO if-else) -->
+            <div class="mt-3 d-flex flex-wrap gap-2" id="imageThumbnails">
+              <% product.image.forEach((img, idx) => { %>
+                <div class="thumb"
+                     style="width:70px; height:70px; border:1px solid #ddd;
+                            border-radius:6px; overflow:hidden; cursor:pointer;"
+                     data-url="<%= img.url %>">
+
+                  <img src="<%= img.url %>"
+                       style="width:100%; height:100%; object-fit:cover;">
+                </div>
+              <% }) %>
+            </div>
+
+            <!-- Buttons -->
+            <div class="mb-0 edit-actions">
+              <button type="submit" class="btn btn-dark">Update</button>
+              <a href="/products/<%= product._id %>" class="btn btn-outline-secondary ms-2">Cancel</a>
+            </div>
+
+          </form>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const thumbs = document.querySelectorAll('#imageThumbnails .thumb');
+  const main = document.getElementById('mainPreview');
+
+  thumbs.forEach(t => {
+    t.addEventListener('click', function () {
+      thumbs.forEach(x => x.classList.remove('active'));
+      this.classList.add('active');
+      main.src = this.dataset.url;
+    });
+  });
+</script>

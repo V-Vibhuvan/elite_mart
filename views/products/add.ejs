@@ -1,0 +1,81 @@
+<% layout('/layouts/boilerplate') %>
+
+<body>
+    <div class="container mt-5">
+        <div class="mb-3">
+            <a href="/products" class="btn btn-outline-secondary btn-sm">&larr; Back to Shop</a>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h3 class="card-title mb-4">Sell a Product</h3>
+
+                        <!-- Form -->
+                         <form action="/products" method="POST" id="productForm" class="needs-validation" novalidate enctype="multipart/form-data">
+
+                            <!-- Item name -->
+                            <div class="mb-3">
+                                <label for="itemname" class="form-label">Item-name</label>
+                                <input required type="text" id="itemname" name="product[title]" class="form-control" placeholder="e.g iPhone 17 pro">
+                                <div class="valid-feedback">Item-name is written</div>
+                            </div>
+
+                            <!-- Description -->
+                            <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea 
+                                name="product[description]" 
+                                id="description"
+                                class="form-control" 
+                                placeholder="Enter description"
+                                rows="4"
+                                required
+                            ></textarea>
+                            <div class="invalid-feedback">Please enter a short description</div>
+                            </div>
+
+                            <!-- Upload Images -->
+                            <div class="mb-3 mt-3">
+                                <label class="form-label">Upload Images (multiple)</label>
+                                <input type="file" name="images" accept="image/*" multiple class="form-control">
+                                <div class="form-text">You can upload up to 5 images</div>
+                            </div>
+
+                            <!-- Price -->
+                            <div class="mb-3">
+                                <label for="price" class="form-label">Price </label>
+                                <input name="product[price]" id="price" class="form-control" placeholder="e.g 1,00,000" type="number" required>
+                            </div>
+
+                            <!-- Categories -->
+                            <div class="mb-3">
+                                <label for="category" class="form-label">Category</label>
+                                <select name="product[category]" id="category" class="form-select" required>
+                                    <option value="" disabled selected>Select Category</option>
+                                    <option>Books & Stationery</option>
+                                    <option>Clothing</option>
+                                    <option>Home & Kitchen</option>
+                                    <option>Mobiles & Accessories</option>
+                                    <option>Healthcare</option>
+                                    <option>Groceries</option>
+                                    <option>Furniture</option>
+                                    <option>Plastic Items</option>
+                                </select>
+                                <div class="invalid-feedback">Please select a Category.</div>
+                            </div>
+                            
+                            <br><br>
+                            <!-- Submit Button -->
+                            <button type="submit" class="btn btn-dark add-btn">Add Listing</button>
+                            <br><br>
+                         </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</body>

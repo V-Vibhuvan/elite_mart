@@ -1,0 +1,128 @@
+<% layout("layouts/boilerplate") %>
+
+<style>
+    .addr-card {
+        border-radius: 8px;
+        padding: 1.25rem;
+        box-shadow: 0 6px 18px rgba(22,24,26,0.06);
+        background: #fff;
+    }
+    .form-label { font-weight: 600; }
+    .small-muted { color: #6b6b6b; font-size: .9rem; }
+    @media (max-width: 767.98px) {
+        .addr-card { padding: 1rem; }
+    }
+</style>
+
+<div class="container mt-5">
+    <div class="row mb-3">
+        <div class="col-12">
+            <h3>Edit address</h3>
+            <p class="small-muted">Update your shipping address details.</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card addr-card">
+
+                <!-- FIXED FORM: PUT via query param -->
+                <form action="/addresses/<%= address._id %>?_method=PUT" 
+                      method="POST" 
+                      novalidate 
+                      class="needs-validation">
+
+                    <!-- Flash messages -->
+                    <% if (typeof success !== 'undefined' && success.length) { %>
+                      <div class="alert alert-success"><%= success %></div>
+                    <% } %>
+                    <% if (typeof error !== 'undefined' && error.length) { %>
+                      <div class="alert alert-danger"><%= error %></div>
+                    <% } %>
+
+                    <div class="mb-3">
+                        <label for="fullname" class="form-label">Full name</label>
+                        <input id="fullname" name="fullName" type="text" class="form-control"
+                               value="<%= address.fullName || '' %>"
+                               required />
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="phone" class="form-label">Phone</label>
+                        <input id="phone" name="phone" type="tel" class="form-control"
+                               value="<%= address.phone || '' %>"
+                               required />
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label for="pincode" class="form-label">Pincode</label>
+                            <input id="pincode" name="pincode" type="text" class="form-control"
+                                   value="<%= address.pincode || '' %>"
+                                   required />
+                        </div>
+                        <div class="col-md-8 mb-3">
+                            <label for="street" class="form-label">House no., building, street</label>
+                            <input id="street" name="street" type="text" class="form-control"
+                                   value="<%= address.street || '' %>"
+                                   required />
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="city" class="form-label">City</label>
+                            <input id="city" name="city" type="text" class="form-control"
+                                   value="<%= address.city || '' %>"
+                                   required />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="state" class="form-label">State</label>
+                            <input id="state" name="state" type="text" class="form-control"
+                                   value="<%= address.state || '' %>"
+                                   required />
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="country" class="form-label">Country</label>
+                        <input id="country" name="country" type="text" class="form-control"
+                               value="<%= address.country || 'India' %>"
+                               required />
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="landmark" class="form-label">Landmark (optional)</label>
+                        <input id="landmark" name="landmark" type="text" class="form-control"
+                               value="<%= address.landmark || '' %>" />
+                    </div>
+
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" value="on" id="isDefault" name="isDefault"
+                          <%= address.isDefault ? 'checked' : '' %> >
+                        <label class="form-check-label" for="isDefault">
+                            Set as default address
+                        </label>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                        <a href="/profile" class="btn btn-outline-secondary">Cancel</a>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card addr-card">
+                <h6 class="mb-2">Tips</h6>
+                <ul class="small-muted mb-0">
+                    <li>Mark as default to use automatically at checkout.</li>
+                    <li>Verify pincode before saving.</li>
+                    <li>You can delete old addresses from your profile.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

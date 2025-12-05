@@ -1,0 +1,126 @@
+<% layout("layouts/boilerplate") %>
+
+<style>
+    .addr-card {
+        border-radius: 8px;
+        padding: 1.25rem;
+        box-shadow: 0 6px 18px rgba(22,24,26,0.06);
+        background: #fff;
+    }
+    .form-label { font-weight: 600; }
+    .small-muted { color: #6b6b6b; font-size: .9rem; }
+    @media (max-width: 767.98px) {
+        .addr-card { padding: 1rem; }
+    }
+</style>
+
+<div class="container mt-5">
+    <div class="row mb-3">
+        <div class="col-12">
+            <h3>Add a new address</h3>
+            <p class="small-muted">Provide a shipping address so you can place orders.</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card addr-card">
+
+                <!-- NOTE: action matches your root-mounted routes -->
+                <form action="/addresses" method="POST" novalidate class="needs-validation">
+
+                    <!-- show success / error flashes if any (use locals directly) -->
+                    <% if (typeof success !== 'undefined' && success.length) { %>
+                        <div class="alert alert-success"><%= success %></div>
+                    <% } %>
+                    <% if (typeof error !== 'undefined' && error.length) { %>
+                        <div class="alert alert-danger"><%= error %></div>
+                    <% } %>
+
+                    <div class="mb-3">
+                        <label for="fullname" class="form-label">Full name</label>
+                        <input id="fullname" name="fullName" type="text" class="form-control" required
+                               value="<%= (typeof address !== 'undefined' && address.fullName) ? address.fullName : '' %>" />
+                        <div class="invalid-feedback">Full name is required.</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="phone" class="form-label">Phone</label>
+                        <input id="phone" name="phone" type="tel" class="form-control" required
+                               value="<%= (typeof address !== 'undefined' && address.phone) ? address.phone : '' %>" />
+                        <div class="invalid-feedback">Phone number is required.</div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label for="pincode" class="form-label">Pincode</label>
+                            <input id="pincode" name="pincode" type="text" class="form-control" required
+                                   value="<%= (typeof address !== 'undefined' && address.pincode) ? address.pincode : '' %>" />
+                            <div class="invalid-feedback">Pincode is required.</div>
+                        </div>
+                        <div class="col-md-8 mb-3">
+                            <label for="street" class="form-label">House no., building, street</label>
+                            <input id="street" name="street" type="text" class="form-control" required
+                                   value="<%= (typeof address !== 'undefined' && address.street) ? address.street : '' %>" />
+                            <div class="invalid-feedback">Street details are required.</div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="city" class="form-label">City</label>
+                            <input id="city" name="city" type="text" class="form-control" required
+                                   value="<%= (typeof address !== 'undefined' && address.city) ? address.city : '' %>" />
+                            <div class="invalid-feedback">City is required.</div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="state" class="form-label">State</label>
+                            <input id="state" name="state" type="text" class="form-control" required
+                                   value="<%= (typeof address !== 'undefined' && address.state) ? address.state : '' %>" />
+                            <div class="invalid-feedback">State is required.</div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="country" class="form-label">Country</label>
+                        <input id="country" name="country" type="text" class="form-control" required
+                               value="<%= (typeof address !== 'undefined' && address.country) ? address.country : 'India' %>" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="landmark" class="form-label">Landmark (optional)</label>
+                        <input id="landmark" name="landmark" type="text" class="form-control"
+                               value="<%= (typeof address !== 'undefined' && address.landmark) ? address.landmark : '' %>" />
+                    </div>
+
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" value="on" id="isDefault" name="isDefault"
+                               <%= (typeof address !== 'undefined' && address.isDefault) ? 'checked' : '' %> />
+                        <label class="form-check-label" for="isDefault">
+                            Set as default address
+                        </label>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">Save Address</button>
+
+                        <!-- Cancel goes to /profile (you mount routes at root) -->
+                        <a href="/profile" class="btn btn-outline-secondary">Cancel</a>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card addr-card">
+                <h6 class="mb-2">Tips</h6>
+                <ul class="small-muted mb-0">
+                    <li>Make sure phone and pincode are correct for delivery.</li>
+                    <li>Set "Default" if you want this address used automatically at checkout.</li>
+                    <li>You can edit or remove addresses later from your profile.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

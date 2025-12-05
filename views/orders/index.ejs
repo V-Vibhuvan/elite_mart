@@ -1,0 +1,147 @@
+<% layout("layouts/boilerplate") %>
+
+<style>
+  .order-card {
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 6px 18px rgba(22,24,26,0.06);
+    background: #fff;
+  }
+  .order-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: .5rem;
+    flex-wrap: wrap;
+  }
+  .order-meta { color: #6b6b6b; font-size: .9rem; }
+  .item-row {
+    display: grid;
+    grid-template-columns: 80px 1fr 110px;
+    gap: .75rem;
+    align-items: center;
+    padding: .5rem 0;
+    border-bottom: 1px solid #f1f1f1;
+  }
+  .item-row:last-child { border-bottom: none; }
+  .item-img { width: 80px; height: 80px; object-fit: cover; border-radius: 6px; }
+  .muted { color: #6b6b6b; font-size: .9rem; }
+  .order-actions { display: flex; gap: .5rem; align-items: center; }
+  @media (max-width: 767.98px) {
+    .item-row { grid-template-columns: 64px 1fr 90px; }
+  }
+</style>
+
+<div class="container mt-4">
+
+  <h3>Orders</h3>
+  <p class="muted">Recent purchases are listed below.</p>
+
+  <% if (!orders || orders.length === 0) { %>
+    <div class="order-card text-center">
+      <p class="muted mb-0">You have no orders yet.</p>
+      <a href="/products" class="btn btn-primary mt-2">Shop Products</a>
+    </div>
+  <% } %>
+
+  <% orders.forEach(order => { %>
+
+    <% 
+      const items = order.items || [];
+      const orderedAt = order.orderedAt 
+        ? new Date(order.orderedAt).toLocaleString("en-IN")
+        : "";
+
+      let orderTotal = 0;
+      items.forEach(it => {
+        orderTotal += (it.priceSnapshot * it.quantity);
+      });
+    %>
+
+    <div class="order-card">
+
+      <!-- Order Header -->
+      <div class="order-header mb-2">
+        <div>
+          <strong>Order</strong> 
+          <a href="/orders/<%= order._id %>">#<%= order._id %></a>
+
+          <div class="order-meta">
+            Placed: <%= orderedAt %> • Items: <%= items.length %>
+          </div>
+        </div>
+
+        <div class="text-end">
+          <div><strong>Total</strong></div>
+          <div style="font-size:1.05rem">₹ <%= orderTotal.toLocaleString("en-IN") %></div>
+          <div class="muted">Payment: <%= order.paymentStatus %></div>
+        </div>
+      </div>
+
+      <!-- Order Items -->
+      <% items.slice(0, 3).forEach(item => { %>
+        <div class="item-row">
+
+          <!-- Image (simple version) -->
+          <div>
+            <img class="item-img"
+              src="<%= item.product.image[0].url %>"
+              alt="Product">
+          </div>
+
+          <!-- Item Details -->
+          <div>
+            <div>
+              <strong>
+                <a href="/products/<%= item.product %>">
+                  <%= item.titleSnapshot %>
+                </a>
+              </strong>
+            </div>
+
+            <div class="muted">
+              Seller:
+              <%= item.seller?.username || "Unknown" %>
+            </div>
+
+            <div class="muted">
+              ₹ <%= item.priceSnapshot %> × <%= item.quantity %>  
+              = ₹ <%= (item.priceSnapshot * item.quantity).toLocaleString("en-IN") %>
+            </div>
+          </div>
+
+          <!-- Status -->
+          <div class="text-end">
+            <div class="muted">Status</div>
+            <div><strong><%= item.status || "Packed" %></strong></div>
+          </div>
+
+        </div>
+      <% }) %>
+
+      <!-- More Items Tag -->
+      <% if (items.length > 3) { %>
+        <div class="mt-2 muted">
+          + <%= items.length - 3 %> more item(s)
+        </div>
+      <% } %>
+
+      <!-- Actions -->
+      <div class="order-actions mt-3">
+        <a href="/orders/<%= order._id %>" class="btn btn-outline-primary">
+          View Order Details
+        </a>
+
+        <form action="/orders/<%= order._id %>?_method=DELETE"
+              method="POST"
+              onsubmit="return confirm('Cancel this order?');">
+          <button class="btn btn-outline-danger">Cancel Order</button>
+        </form>
+      </div>
+
+    </div>
+
+  <% }) %>
+
+</div>
