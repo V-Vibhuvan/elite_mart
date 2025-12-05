@@ -1,5 +1,5 @@
 // const {createReview, destroyReview} = require("../controllers/review.js");
-const Review = require("../models/Review.js");
+const Review = require("../models/review.js");
 const Product = require("../models/products.js");
 
 //Create a Review
