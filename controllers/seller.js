@@ -33,7 +33,9 @@ module.exports.updatePayment = async (req, res) => {
     try {
         const { orderId, itemIndex } = req.params;
         // checkbox may not send anything when unchecked; default to "Pending"
-        const paymentStatus = req.body.paymentStatus || req.body.paymentStatusDefault;
+        let rawStatus = req.body.paymentStatus;
+        if (Array.isArray(rawStatus)) rawStatus = rawStatus[rawStatus.length - 1];
+        const paymentStatus = rawStatus || req.body.paymentStatusDefault || "Unpaid";
 
         const order = await Order.findById(orderId);
 
