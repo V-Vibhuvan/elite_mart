@@ -59,27 +59,29 @@
                     <!-- PAYMENT -->
                     <div class="col-md-3 mt-2 mt-md-0">
                         <form 
-                            action="/seller/soldItems/<%= order._id %>/items/<%= origIdx %>/payment?_method=PUT" 
-                            method="POST"
+                        action="/seller/soldItems/<%= order._id %>/items/<%= origIdx %>/payment"
+                        method="POST"
                         >
-                            <label class="small" style="font-weight:600;">Payment</label>
+                        <!-- method-override fix -->
+                        <input type="hidden" name="_method" value="PUT">
 
-                            <div class="d-flex align-items-center mt-1">
-                                <!-- Always submit something -->
-                                <input type="hidden" name="paymentStatus" value="Unpaid">
+                        <label class="small" style="font-weight:600;">Payment</label>
 
-                                <input 
-                                    type="checkbox"
-                                    name="paymentStatus"
-                                    value="Paid"
-                                    <%= item.paymentStatus === "Paid" ? "checked" : "" %>
-                                >
-                                <span class="ms-2 small">Paid</span>
+                        <div class="d-flex align-items-center mt-1">
+                            <input type="hidden" name="paymentStatus" value="Unpaid">
 
-                                <button class="btn btn-sm btn-success ms-3" type="submit">
-                                    Save
-                                </button>
-                            </div>
+                            <input 
+                                type="checkbox"
+                                name="paymentStatus"
+                                value="Paid"
+                                <%= item.paymentStatus === "Paid" ? "checked" : "" %>
+                            >
+                            <span class="ms-2 small">Paid</span>
+
+                            <button class="btn btn-sm btn-success ms-3" type="submit">
+                                Save
+                            </button>
+                        </div>
                         </form>
                     </div>
 
