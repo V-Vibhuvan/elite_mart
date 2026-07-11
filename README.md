@@ -162,28 +162,6 @@ npm start
 
 ---
 
-## 📸 Screenshots
-
-Add screenshots here.
-
-Example:
-
-```
-screenshots/
-
-Home.png
-
-Product.png
-
-Cart.png
-
-Login.png
-
-Admin.png
-```
-
----
-
 ## 🚀 Future Improvements
 
 - Razorpay / Stripe Payment Integration
